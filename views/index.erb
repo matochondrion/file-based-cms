@@ -3,11 +3,13 @@
 
     <ul>
 
-      <% @documents.each do |document| %>
+      <% @files.each do |document| %>
         <li>
           <%= document  %>
         </li>
       <% end %>
+
+      <%= @root %>
 
     </ul>
 
