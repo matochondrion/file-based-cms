@@ -31,7 +31,7 @@ def load_file_content(path)
     headers['Content-Type'] = 'text/plain;charset=utf-8'
     File.read(path)
   when '.md'
-    render_markdown(File.read(path))
+    erb render_markdown(File.read(path))
   end
 end
 
