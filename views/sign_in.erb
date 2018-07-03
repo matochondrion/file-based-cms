@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>CMS</title>
+    <link href="/stylesheets/styles.css/" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <% if session[:message] %>
+      <p class="message"><%= session.delete(:message) %></p>
+    <% end %>
+
+    <form method="post" action="/sign-in">
+      <div>
+        <label for="username">Username: </label>
+        <input id="username" name="username" value="<%= session[:username] %>">
+      </div>
+
+      <div>
+        <label for="password">Password: </label>
+        <input id="password" name="password">
+      </div>
+
+      <div>
+        <button type="submit">Sign In</button>
+      </div>
+    </form>
+
+  </body>
+</html>

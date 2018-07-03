@@ -9,6 +9,10 @@ configure do
   set :session_secret, 'super secret'
 end
 
+before do
+  @users = [{ username: 'admin', password: 'secret' }]
+end
+
 def data_path
   if ENV['RACK_ENV'] == 'test'
     File.expand_path('../test/data', __FILE__)
@@ -40,6 +44,33 @@ get '/' do
     File.basename(path)
   end
   erb :index
+end
+
+get '/sign-in' do
+  erb :sign_in, layout: false
+end
+
+post '/sign-in' do
+  session[:username] = params[:username]
+
+  session[:signed_in] = @users.any? do |user|
+    user[:username] == params[:username] &&
+      user[:password] == params[:password]
+  end
+
+  if session[:signed_in]
+    session[:message] = "Welcome!"
+    redirect '/'
+  else
+    session[:message] = "Invalid Credentials"
+    erb :sign_in, layout: false
+  end
+end
+
+get '/sign-out' do
+  session[:username] = nil
+  session[:signed_in] = false
+  redirect '/'
 end
 
 get '/new' do
@@ -102,5 +133,3 @@ post '/:filename/delete' do
   session[:message] = "#{params[:filename]} has been deleted."
   redirect '/'
 end
-
-

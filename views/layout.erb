@@ -9,7 +9,24 @@
       <p class="message"><%= session.delete(:message) %></p>
     <% end %>
 
-    <%= yield %>
+    <% if session[:signed_in] %>
+      <%= yield %>
+
+      <div>
+
+        <span class="inline"><%= "Signed in as #{session[:username]}" %></span>
+
+        <form class="inline" method="get" action="/sign-out">
+          <button>Sign Out</button>
+        </form>
+
+      </div>
+
+    <% else %>
+      <form method="get" action="/sign-in">
+        <button>Sign In</button>
+      </form>
+    <% end %>
 
   </body>
 </html>

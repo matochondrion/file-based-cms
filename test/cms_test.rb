@@ -137,5 +137,25 @@ class CMSTest < Minitest::Test
     get '/'
     refute_includes(last_response.body, 'test.txt')
   end
-end
 
+  def test_index_not_signed_in
+    get '/'
+
+  end
+
+  def test_index_signed_in
+
+  end
+
+  def tes_
+
+  end
+
+  def tes_
+
+  end
+
+  def tes_
+
+  end
+end
