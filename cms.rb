@@ -25,7 +25,6 @@ def render_markdown(text)
 end
 
 def load_file_content(path)
-  content = File.read(path)
   case File.extname(path)
   when '.txt'
     headers['Content-Type'] = 'text/plain;charset=utf-8'
@@ -41,6 +40,29 @@ get '/' do
     File.basename(path)
   end
   erb :index
+end
+
+get '/new' do
+  erb :new
+end
+
+post '/create' do
+  valid_extentions = %w(.txt .md .css .html .js)
+  filename = params[:filename]
+
+  if valid_extentions.include?(File.extname(filename))
+    file_path = File.join(data_path, filename)
+
+    File.write(file_path, '')
+    session[:message] = "#{filename} has been created."
+
+    redirect '/'
+  else filename.size == 0
+    session[:message] = "A name is required with a valid exention of:
+    #{valid_extentions}."
+    status 422
+    erb :new
+  end
 end
 
 get '/:filename' do
