@@ -51,13 +51,13 @@ get '/users/signin' do
 end
 
 post '/users/signin' do
-  session[:signed_in] = @users.any? do |user|
+  valid_credentials = @users.any? do |user|
     match_user = user[:username] == params[:username]
     match_password = user[:password] == params[:password]
     match_user && match_user
   end
 
-  if session[:signed_in]
+  if valid_credentials
     session[:username] = params[:username]
     session[:message] = "Welcome!"
     redirect '/'
@@ -71,7 +71,6 @@ end
 post '/users/signout' do
   session.delete(:username)
   session[:message] = 'You have been signed out.'
-  session[:signed_in] = false
   redirect '/'
 end
 

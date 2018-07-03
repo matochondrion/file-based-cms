@@ -19,8 +19,6 @@ class CMSTest < Minitest::Test
   end
 
   def create_document(name, content = '')
-    # File.write(File.join(data_path, name), content)
-
     File.open(File.join(data_path, name), 'w') do |file|
       file.write(content)
     end
@@ -30,8 +28,9 @@ class CMSTest < Minitest::Test
     last_request.env['rack.session']
   end
 
-  def sign_in
-    post '/users/signin', username: 'admin', password: 'secret'
+  # admin_session = { 'rack.session' => { username: 'admin'} }
+  def admin_session
+    { 'rack.session' => { username: 'admin'} }
   end
 
   def app
@@ -39,23 +38,21 @@ class CMSTest < Minitest::Test
   end
 
   def test_index
-    sign_in
     create_document 'about.md'
     create_document 'changes.txt'
 
-    get '/'
+    get '/', {}, admin_session
 
-    # assert_equal(200, last_response.status)
-    # assert_equal('text/html;charset=utf-8', last_response['Content-Type'])
-    # assert_includes(last_response.body, "about.md")
+    assert_equal(200, last_response.status)
+    assert_equal('text/html;charset=utf-8', last_response['Content-Type'])
+    assert_includes(last_response.body, "about.md")
     assert_includes(last_response.body, 'changes.txt')
   end
 
   def test_viewing_text_document
-    sign_in
     create_document 'about.txt', 'make all the worlds muffins'
 
-    get '/about.txt'
+    get '/about.txt', {}, admin_session
 
     assert_equal(200, last_response.status)
     assert_equal('text/plain;charset=utf-8', last_response['Content-Type'])
@@ -63,9 +60,8 @@ class CMSTest < Minitest::Test
   end
 
   def test_viewing_markdown_document
-    sign_in
     create_document 'about.md', '# Ruby is...'
-    get '/about.md'
+    get '/about.md', {}, admin_session
 
     assert_equal(200, last_response.status)
     assert_equal('text/html;charset=utf-8', last_response['Content-Type'])
@@ -80,10 +76,9 @@ class CMSTest < Minitest::Test
   end
 
   def test_editing_content
-    sign_in
     create_document 'about.txt'
 
-    get '/about.txt/edit'
+    get '/about.txt/edit', {}, admin_session
 
     assert_equal('text/html;charset=utf-8', last_response['Content-Type'])
     assert_includes(last_response.body, '</textarea>')
@@ -102,8 +97,7 @@ class CMSTest < Minitest::Test
   end
 
   def test_view_new_document_form
-    sign_in
-    get '/new'
+    get '/new', {}, admin_session
 
     assert_equal(200, last_response.status)
     assert_includes(last_response.body, '<input')
@@ -161,9 +155,8 @@ class CMSTest < Minitest::Test
   end
 
   def test_signout
-    sign_in
-    get '/', {}, {'rack.session' => { username: 'admin', password: 'secret'} }
-    assert_equal 'secret', session[:password]
+    get '/', {}, admin_session
+    assert_equal 'admin', session[:username]
     assert_includes last_response.body, 'Signed in as admin'
 
     post '/users/signout'

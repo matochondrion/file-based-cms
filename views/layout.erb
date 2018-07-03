@@ -9,7 +9,7 @@
       <p class="message"><%= session.delete(:message) %></p>
     <% end %>
 
-    <% if session[:signed_in] %>
+    <% if session[:username] %>
       <%= yield %>
 
       <div>
