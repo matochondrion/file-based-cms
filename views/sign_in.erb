@@ -12,7 +12,7 @@
     <form method="post" action="/users/signin">
       <div>
         <label for="username">Username: </label>
-        <input id="username" name="username" value="<%= session[:username] %>">
+        <input id="username" name="username" value="<%= params[:username] %>">
       </div>
 
       <div>

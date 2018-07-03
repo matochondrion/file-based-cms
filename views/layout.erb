@@ -14,7 +14,7 @@
 
       <div>
 
-        <span class="inline"><%= "Signed in as #{session[:username]}" %></span>
+        <span class="user-status"><%= "Signed in as #{session[:username]}" %></span>
 
         <form class="inline" method="post" action="/users/signout">
           <button>Sign Out</button>
