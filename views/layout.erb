@@ -16,14 +16,14 @@
 
         <span class="inline"><%= "Signed in as #{session[:username]}" %></span>
 
-        <form class="inline" method="get" action="/sign-out">
+        <form class="inline" method="post" action="/users/signout">
           <button>Sign Out</button>
         </form>
 
       </div>
 
     <% else %>
-      <form method="get" action="/sign-in">
+      <form method="get" action="/users/signin">
         <button>Sign In</button>
       </form>
     <% end %>

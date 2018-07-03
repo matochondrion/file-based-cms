@@ -26,11 +26,16 @@ class CMSTest < Minitest::Test
     end
   end
 
+  def sign_in
+    post '/users/signin', username: 'admin', password: 'secret'
+  end
+
   def app
     Sinatra::Application
   end
 
   def test_index
+    sign_in
     create_document 'about.md'
     create_document 'changes.txt'
 
@@ -43,6 +48,7 @@ class CMSTest < Minitest::Test
   end
 
   def test_viewing_text_document
+    sign_in
     create_document 'about.txt', 'make all the worlds muffins'
 
     get '/about.txt'
@@ -53,6 +59,7 @@ class CMSTest < Minitest::Test
   end
 
   def test_viewing_markdown_document
+    sign_in
     create_document 'about.md', '# Ruby is...'
     get '/about.md'
 
@@ -62,6 +69,7 @@ class CMSTest < Minitest::Test
   end
 
   def test_document_not_found
+    sign_in
     get '/notafile.ext'
 
     assert_equal(302, last_response.status)
@@ -73,6 +81,7 @@ class CMSTest < Minitest::Test
   end
 
   def test_editing_content
+    sign_in
     create_document 'about.txt'
 
     get '/about.txt/edit'
@@ -83,6 +92,7 @@ class CMSTest < Minitest::Test
   end
 
   def test_updating_content
+    sign_in
     create_document 'changes.txt'
 
     post '/changes.txt', content: "new content"
@@ -99,6 +109,7 @@ class CMSTest < Minitest::Test
   end
 
   def test_view_new_document_form
+    sign_in
     get '/new'
 
     assert_equal(200, last_response.status)
@@ -107,6 +118,7 @@ class CMSTest < Minitest::Test
   end
 
   def test_create_new_document
+    sign_in
     post '/create', filename: 'test.txt'
     assert_equal(302, last_response.status)
 
@@ -138,24 +150,39 @@ class CMSTest < Minitest::Test
     refute_includes(last_response.body, 'test.txt')
   end
 
-  def test_index_not_signed_in
-    get '/'
+  def test_signin_form
+    get '/users/signin'
 
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, '<input'
+    assert_includes last_response.body, %q(<button type="submit")
   end
 
-  def test_index_signed_in
+  def test_signin
+    post '/users/signin', username: 'admin', password: 'secret'
+    assert_equal 302, last_response.status
 
+    get last_response['Location']
+    assert_includes last_response.body, 'Welcome'
+    assert_includes last_response.body, 'Signed in as admin'
   end
 
-  def tes_
-
+  def test_signin_with_bad_credentials
+    post '/users/signin', username: 'guest', password: 'shhhh'
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, 'Invalid Credentials'
   end
 
-  def tes_
+  def test_signout
+    post '/users/signin', username: 'admin', password: 'secret'
+    get last_response['Location']
+    assert_includes last_response.body, 'Welcome'
 
+    post '/users/signout'
+    get last_response['Location']
+
+    assert_includes last_response.body, 'You have been signed out'
+    assert_includes last_response.body, 'Sign In'
   end
 
-  def tes_
-
-  end
 end

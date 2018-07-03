@@ -46,11 +46,11 @@ get '/' do
   erb :index
 end
 
-get '/sign-in' do
+get '/users/signin' do
   erb :sign_in, layout: false
 end
 
-post '/sign-in' do
+post '/users/signin' do
   session[:username] = params[:username]
 
   session[:signed_in] = @users.any? do |user|
@@ -63,12 +63,14 @@ post '/sign-in' do
     redirect '/'
   else
     session[:message] = "Invalid Credentials"
+    status 422
     erb :sign_in, layout: false
   end
 end
 
-get '/sign-out' do
+post '/users/signout' do
   session[:username] = nil
+  session[:message] = 'You have been signed out.'
   session[:signed_in] = false
   redirect '/'
 end
