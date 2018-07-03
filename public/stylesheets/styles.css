@@ -6,4 +6,7 @@ body {
   padding: 1rem;
   background: yellow;
 }
+.inline {
+  display: inline;
+}
 
