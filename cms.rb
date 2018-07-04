@@ -3,14 +3,11 @@ require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'tilt/erubis'
 require 'redcarpet'
+require 'yaml'
 
 configure do
   enable :sessions
   set :session_secret, 'super secret'
-end
-
-before do
-  @users = [{ username: 'admin', password: 'secret' }]
 end
 
 def data_path
@@ -21,11 +18,27 @@ def data_path
   end
 end
 
-root = File.expand_path('..', __FILE__)
-
 def render_markdown(text)
   markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
   markdown.render(text)
+end
+
+def load_user_credentials
+  credentials_path = if ENV['RACK_ENV'] == 'test'
+    File.expand_path('../test/users.yml', __FILE__)
+  else
+    File.expand_path('../users.yml', __FILE__)
+  end
+
+  YAML.load_file(credentials_path)
+end
+
+def valid_user?(username, password)
+  load_user_credentials.any? do |valid_username, valid_password|
+    puts valid_username
+    puts valid_password
+    username == valid_username && password == valid_password
+  end
 end
 
 def user_signed_in?
@@ -63,13 +76,7 @@ get '/users/signin' do
 end
 
 post '/users/signin' do
-  valid_credentials = @users.any? do |user|
-    match_user = user[:username] == params[:username]
-    match_password = user[:password] == params[:password]
-    match_user && match_user
-  end
-
-  if valid_credentials
+  if valid_user?(params[:username], params[:password])
     session[:username] = params[:username]
     session[:message] = "Welcome!"
     redirect '/'
@@ -156,3 +163,18 @@ post '/:filename/delete' do
   session[:message] = "#{params[:filename]} has been deleted."
   redirect '/'
 end
+
+=begin
+* create a users.yml file
+* write a method to check if a pair of username and password are valid in the
+.yml fihle
+  - load a file with File.read
+  - pass it to YAML.load() and assign a new variable
+  - iterate over the hashe with key value pairs and check of there are any matches
+
+* if a name matches then sign user in
+* format of yaml file:
+  ----
+
+  ...
+=end
