@@ -1,6 +1,5 @@
 ---
-  bill: $2a$10$AW.PwHPDvX73UFBD6phYL.DyEyStbh0wASfcnQpZLauJVhUWbLKPS,
-  sonia: $2a$10$qMeeQWbKCuwiMou2zlN/pe2ZE45PlrL8GchpCHVPcK84HspqxaDaG,
-  admin: $2a$10$HoWXbdUAaJ6a1HV7TkJW2.9FgOoy0FtHGPQdo11faNHap7S/J80rW,
-  admin: secret
+  bill: $2a$10$AW.PwHPDvX73UFBD6phYL.DyEyStbh0wASfcnQpZLauJVhUWbLKPS
+  sonia: $2a$10$qMeeQWbKCuwiMou2zlN/pe2ZE45PlrL8GchpCHVPcK84HspqxaDaG
+  admin: $2a$10$HoWXbdUAaJ6a1HV7TkJW2.9FgOoy0FtHGPQdo11faNHap7S/J80rW
 ...
