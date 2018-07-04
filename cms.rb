@@ -58,12 +58,13 @@ def require_signed_in_user
 end
 
 def load_file_content(path)
+  content = File.read(path)
   case File.extname(path)
+  when '.md'
+    erb render_markdown(content)
   when '.txt'
     headers['Content-Type'] = 'text/plain;charset=utf-8'
-    File.read(path)
-  when '.md'
-    erb render_markdown(File.read(path))
+    content
   end
 end
 
